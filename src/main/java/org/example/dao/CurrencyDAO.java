@@ -1,4 +1,6 @@
-package dao;
+package org.example.dao;
+
+import org.example.entiny.Currency;
 
 import java.util.Optional;
 
