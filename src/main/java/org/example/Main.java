@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.connection.DatabaseConfig;
 import org.example.dao.CurrencyDAOImpl;
+import org.example.entiny.Currency;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -23,7 +24,16 @@ public class Main {
         conn.close();
 
         CurrencyDAOImpl currencyDAO = new CurrencyDAOImpl();
-        System.out.println(currencyDAO.getAllCurrencies());
 
+
+        System.out.println(currencyDAO.findById(1L));
+
+        Currency newCurrency = new Currency();
+        newCurrency.setFull_name("Test Currency");
+        newCurrency.setCode("TST");
+        newCurrency.setSign("₮");
+        Currency s = currencyDAO.save(newCurrency);
+        System.out.println(" ");
+        System.out.println(currencyDAO.getAllCurrencies());
         }
 }
