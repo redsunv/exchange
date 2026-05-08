@@ -1,7 +1,7 @@
 package org.example.dao;
 
 import org.example.connection.DatabaseConfig;
-import org.example.entiny.Currency;
+import org.example.model.Currency;
 import org.example.exception.DatabaseAccessException;
 
 import java.sql.*;
@@ -67,7 +67,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
 
     @Override
     public Optional<Currency> findById(Long id) {
-        String sql = "SELECT * FROM currencies WHERE id = ?";
+     final String sql = "SELECT * FROM currencies WHERE id = ?";
 
 
         try (Connection connection = DatabaseConfig.getConnection();
@@ -95,48 +95,33 @@ public class CurrencyDAOImpl implements CurrencyDAO {
 
     @Override
     public Currency save(Currency currency) {
-        String sql;
-        boolean hasId = currency.getId() != null;
+            String sql = "INSERT INTO currencies (code, full_name, sign) VALUES (?, ?, ?)";
 
-        if (hasId) {
+            try (Connection conn = DatabaseConfig.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            sql = "INSERT INTO currencies (id, code, full_name, sign) VALUES (?, ?, ?, ?)";
-        } else {
 
-            sql = "INSERT INTO currencies (code, full_name, sign) VALUES (?, ?, ?)";
-        }
-
-        try (Connection conn = DatabaseConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            if (hasId) {
-                stmt.setLong(1, currency.getId());
-                stmt.setString(2, currency.getCode());
-                stmt.setString(3, currency.getFull_name());
-                stmt.setString(4, currency.getSign());
-            } else {
                 stmt.setString(1, currency.getCode());
                 stmt.setString(2, currency.getFull_name());
                 stmt.setString(3, currency.getSign());
-            }
 
-            stmt.executeUpdate();
+                //  Выполнение запроса
+                stmt.executeUpdate();
 
-
-            if (!hasId) {
+                //  Получение ID
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
                     if (rs.next()) {
                         currency.setId(rs.getLong(1));
                     }
                 }
+
+
+                return currency;
+
+            } catch (SQLException e) {
+                throw new DatabaseAccessException("Ошибка при сохранении валюты: " + currency.getCode(), e);
             }
-
-            return currency;
-
-        } catch (SQLException e) {
-            throw new DatabaseAccessException("Ошибка при сохранении валюты: " + currency.getCode(), e);
         }
-    }
 
     @Override
     public Optional<Currency> update(Currency currency) {

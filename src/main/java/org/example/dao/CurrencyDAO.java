@@ -1,6 +1,6 @@
 package org.example.dao;
 
-import org.example.entiny.Currency;
+import org.example.model.Currency;
 
 import java.util.Optional;
 

@@ -2,7 +2,6 @@ package org.example;
 
 import org.example.connection.DatabaseConfig;
 import org.example.dao.CurrencyDAOImpl;
-import org.example.entiny.Currency;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
