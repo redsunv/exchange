@@ -2,7 +2,7 @@ package org.example.dao;
 
 import org.example.connection.DatabaseConfig;
 import org.example.entiny.Currency;
-import org.example.exception.DataAccessException;
+import org.example.exception.DatabaseAccessException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
             return Optional.empty();
 
         } catch (SQLException e) {
-            throw new DataAccessException("Ошибка при поиске валюты по коду: " + code, e);
+            throw new DatabaseAccessException("Ошибка при поиске валюты по коду: " + code, e);
         }
 
     }
@@ -58,7 +58,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Ошибка получения валют", e);
+            throw new DatabaseAccessException("Ошибка получения валют", e);
         }
 
         return currencies;
@@ -89,28 +89,53 @@ public class CurrencyDAOImpl implements CurrencyDAO {
             return Optional.empty();
 
         } catch (SQLException e) {
-            throw new DataAccessException("Ошибка поиска по ID: " + id, e);
+            throw new DatabaseAccessException("Ошибка поиска по ID: " + id, e);
         }
     }
 
     @Override
     public Currency save(Currency currency) {
-        String sql = "INSERT INTO currencies (code, full_name, sign) VALUES (?, ?, ?)";
-        try {
-            Connection connection = DatabaseConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1, currency.getCode());
-            statement.setString(2, currency.getFull_name());
-            statement.setString(3, currency.getSign());
+        String sql;
+        boolean hasId = currency.getId() != null;
 
+        if (hasId) {
 
-            statement.executeUpdate();
-            ResultSet resultSet = statement.getGeneratedKeys();
-            if (resultSet.next()) currency.setId(resultSet.getLong(1));
-        } catch (SQLException e) {
-            throw new DataAccessException("Ошибка при сохранении валюты: " + currency.getCode(), e);
+            sql = "INSERT INTO currencies (id, code, full_name, sign) VALUES (?, ?, ?, ?)";
+        } else {
+
+            sql = "INSERT INTO currencies (code, full_name, sign) VALUES (?, ?, ?)";
         }
-        return currency;
+
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            if (hasId) {
+                stmt.setLong(1, currency.getId());
+                stmt.setString(2, currency.getCode());
+                stmt.setString(3, currency.getFull_name());
+                stmt.setString(4, currency.getSign());
+            } else {
+                stmt.setString(1, currency.getCode());
+                stmt.setString(2, currency.getFull_name());
+                stmt.setString(3, currency.getSign());
+            }
+
+            stmt.executeUpdate();
+
+
+            if (!hasId) {
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        currency.setId(rs.getLong(1));
+                    }
+                }
+            }
+
+            return currency;
+
+        } catch (SQLException e) {
+            throw new DatabaseAccessException("Ошибка при сохранении валюты: " + currency.getCode(), e);
+        }
     }
 
     @Override
@@ -119,7 +144,25 @@ public class CurrencyDAOImpl implements CurrencyDAO {
     }
 
     @Override
-    public void delete(Long aLong) {
+    public void delete(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID не может быть null");
+        }
+        String sql = "DELETE FROM currencies WHERE id = ?";
 
+        try (Connection connection = DatabaseConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, id);
+            int deletedRows = statement.executeUpdate();
+
+            if (deletedRows == 0) {
+                throw new DatabaseAccessException("Валюта с ID " + id + " не найдена");
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseAccessException("Ошибка при удалении валюты с ID: " + id, e);
+        }
     }
 }
+

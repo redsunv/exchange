@@ -13,6 +13,8 @@ public class Currency {
     private String code;
     private String full_name;
     private String sign;
+
+
     public Long getId() {
         return id;
     }

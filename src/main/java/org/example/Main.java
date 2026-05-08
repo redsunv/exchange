@@ -26,8 +26,7 @@ public class Main {
         CurrencyDAOImpl currencyDAO = new CurrencyDAOImpl();
 
 
-        System.out.println(currencyDAO.findById(4L));
-
-        System.out.println(currencyDAO.findByCode("USr"));
+        System.out.println(currencyDAO.getAllCurrencies());
+        System.out.println(currencyDAO.findByCode("USD"));
         }
 }
