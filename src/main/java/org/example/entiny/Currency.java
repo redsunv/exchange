@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Currency {
     private Long id;
-
+    private String code;
+    private String full_name;
+    private String sign;
     public Long getId() {
         return id;
     }
@@ -43,7 +45,5 @@ public class Currency {
         this.sign = sign;
     }
 
-    private String code;
-    private String full_name;
-    private String sign;
+
 }

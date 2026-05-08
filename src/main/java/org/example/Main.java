@@ -26,14 +26,8 @@ public class Main {
         CurrencyDAOImpl currencyDAO = new CurrencyDAOImpl();
 
 
-        System.out.println(currencyDAO.findById(1L));
+        System.out.println(currencyDAO.findById(4L));
 
-        Currency newCurrency = new Currency();
-        newCurrency.setFull_name("Test Currency");
-        newCurrency.setCode("TST");
-        newCurrency.setSign("₮");
-        Currency s = currencyDAO.save(newCurrency);
-        System.out.println(" ");
-        System.out.println(currencyDAO.getAllCurrencies());
+        System.out.println(currencyDAO.findByCode("USr"));
         }
 }

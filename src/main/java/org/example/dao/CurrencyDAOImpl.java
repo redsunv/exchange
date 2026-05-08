@@ -2,6 +2,7 @@ package org.example.dao;
 
 import org.example.connection.DatabaseConfig;
 import org.example.entiny.Currency;
+import org.example.exception.DataAccessException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,8 +14,29 @@ public class CurrencyDAOImpl implements CurrencyDAO {
 
     @Override
     public Optional<Currency> findByCode(String code) {
+        String sql = "SELECT id, code, full_name, sign FROM currencies WHERE code = ?";
+        try (Connection connection = DatabaseConfig.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-        return Optional.empty();
+            preparedStatement.setString(1, code.toUpperCase());
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    Currency currency = new Currency();
+                    currency.setId(resultSet.getLong("id"));
+                    currency.setCode(resultSet.getString("code"));
+                    currency.setFull_name(resultSet.getString("full_name"));
+                    currency.setSign(resultSet.getString("sign"));
+                    return Optional.of(currency);
+                }
+            }
+
+            return Optional.empty();
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Ошибка при поиске валюты по коду: " + code, e);
+        }
+
     }
 
     @Override
@@ -36,7 +58,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Ошибка получения валют", e);
+            throw new DataAccessException("Ошибка получения валют", e);
         }
 
         return currencies;
@@ -67,7 +89,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
             return Optional.empty();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Ошибка поиска по ID: " + id, e);
+            throw new DataAccessException("Ошибка поиска по ID: " + id, e);
         }
     }
 
@@ -86,7 +108,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
             ResultSet resultSet = statement.getGeneratedKeys();
             if (resultSet.next()) currency.setId(resultSet.getLong(1));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("Ошибка при сохранении валюты: " + currency.getCode(), e);
         }
         return currency;
     }
