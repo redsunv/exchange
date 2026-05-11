@@ -14,7 +14,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
 
     @Override
     public Optional<Currency> findByCode(String code) {
-        String sql = "SELECT id, code, full_name, sign FROM currencies WHERE code = ?";
+        String sql = "SELECT id, code, fullName, sign FROM currencies WHERE code = ?";
         try (Connection connection = DatabaseConfig.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
@@ -25,7 +25,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
                     Currency currency = new Currency();
                     currency.setId(resultSet.getLong("id"));
                     currency.setCode(resultSet.getString("code"));
-                    currency.setFull_name(resultSet.getString("full_name"));
+                    currency.setFullName(resultSet.getString("fullName"));
                     currency.setSign(resultSet.getString("sign"));
                     return Optional.of(currency);
                 }
@@ -52,7 +52,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
                 Currency currency = new Currency();
                 currency.setId(resultSet.getLong("id"));
                 currency.setCode(resultSet.getString("code"));
-                currency.setFull_name(resultSet.getString("full_name"));
+                currency.setFullName(resultSet.getString("fullName"));
                 currency.setSign(resultSet.getString("sign"));
                 currencies.add(currency);
             }
@@ -80,7 +80,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
                     Currency currency = new Currency();
                     currency.setId(resultSet.getLong("id"));
                     currency.setCode(resultSet.getString("code"));
-                    currency.setFull_name(resultSet.getString("full_name"));
+                    currency.setFullName(resultSet.getString("fullName"));
                     currency.setSign(resultSet.getString("sign"));
                     return Optional.of(currency);
                 }
@@ -95,14 +95,14 @@ public class CurrencyDAOImpl implements CurrencyDAO {
 
     @Override
     public Currency save(Currency currency) {
-            String sql = "INSERT INTO currencies (code, full_name, sign) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO currencies (code, fullName, sign) VALUES (?, ?, ?)";
 
             try (Connection conn = DatabaseConfig.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
 
                 stmt.setString(1, currency.getCode());
-                stmt.setString(2, currency.getFull_name());
+                stmt.setString(2, currency.getFullName());
                 stmt.setString(3, currency.getSign());
 
                 //  Выполнение запроса

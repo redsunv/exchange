@@ -1,0 +1,78 @@
+package org.example.servlet;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.example.dao.CurrencyDAO;
+import org.example.dao.CurrencyDAOImpl;
+import org.example.dto.CurrencyResponseDTO;
+import org.example.mapper.CurrencyMapper;
+import org.example.model.Currency;
+import org.example.validator.CurrencyValidator;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
+
+@WebServlet("/currency/*")
+//одна валюта
+public class CurrencyServlet extends HttpServlet {
+
+    private final CurrencyDAO currencyDAO = new CurrencyDAOImpl();
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        PrintWriter out = resp.getWriter();
+
+        try {
+            // Получаем код из URL: /currency/USD → "/USD" → "USD"
+            String pathInfo = req.getPathInfo();
+
+
+
+            String code = pathInfo.substring(1);  // убираем первый слеш
+            code = code.toUpperCase();            // в верхний регистр
+
+            //  Валидация формата
+            List<String> errors = CurrencyValidator.validateCurrencyCode(code);
+            if (!errors.isEmpty()) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.print(objectMapper.writeValueAsString(Map.of("errors", errors)));
+                return;
+            }
+
+            //  Ищем валюту в БД
+            Currency currency = currencyDAO.findByCode(code)
+                    .orElseThrow(() -> new IllegalArgumentException("Валюта не найдена"));
+
+            // Entity → Response DTO
+            CurrencyResponseDTO dto = CurrencyMapper.toResponseDTO(currency);
+
+            // DTO → JSON
+            String json = objectMapper.writeValueAsString(dto);
+
+            //Отправляем ответ
+            out.print(json);
+            resp.setStatus(HttpServletResponse.SC_OK);  // 200
+
+        } catch (IllegalArgumentException e) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);  // 404
+            out.print("{\"error\": \"" + e.getMessage() + "\"}");
+        } catch (Exception e) {
+            //Обработка всех остальных ошибок
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);  // 500
+            out.print("{\"error\": \"Internal server error: " + e.getMessage() + "\"}");
+        }
+
+
+    }
+}
