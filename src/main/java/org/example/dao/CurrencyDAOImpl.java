@@ -105,16 +105,18 @@ public class CurrencyDAOImpl implements CurrencyDAO {
                 stmt.setString(2, currency.getFullName());
                 stmt.setString(3, currency.getSign());
 
-                //  Выполнение запроса
+
                 stmt.executeUpdate();
 
-                //  Получение ID
+
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
                     if (rs.next()) {
                         currency.setId(rs.getLong(1));
                     }
                 }
-
+                if (findByCode(currency.getCode()).isPresent()) {
+                    throw new DatabaseAccessException("Валюта с кодом " + currency.getCode() + " уже существует");
+                }
 
                 return currency;
 
@@ -125,7 +127,26 @@ public class CurrencyDAOImpl implements CurrencyDAO {
 
     @Override
     public Optional<Currency> update(Currency currency) {
-        return Optional.empty();
+        String sql = "UPDATE currencies SET fullName = ?, sign = ? WHERE code = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, currency.getFullName());
+            stmt.setString(2, currency.getSign());
+            stmt.setString(3, currency.getCode());
+
+            int updatedRows = stmt.executeUpdate();
+
+            if (updatedRows > 0) {
+                return Optional.of(currency);
+            }
+
+            return Optional.empty();
+
+        } catch (SQLException e) {
+            throw new DatabaseAccessException("Ошибка при обновлении валюты: " + currency.getCode(), e);
+        }
     }
 
     @Override

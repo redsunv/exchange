@@ -10,6 +10,13 @@ import org.example.dao.CurrencyDAO;
 import org.example.dao.CurrencyDAOImpl;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
+import org.example.dto.CurrencyRequestDTO;
+import org.example.dto.CurrencyResponseDTO;
+import org.example.mapper.CurrencyMapper;
+import org.example.model.Currency;
+import java.util.List;
 
 
 @WebServlet("/currencies")
@@ -22,7 +29,16 @@ public class CurrenciesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
-        super.doGet(req, resp);
+        resp.setCharacterEncoding("UTF-8");
+        PrintWriter out = resp.getWriter();
+
+        List<Currency> currencies = currencyDAO.getAllCurrencies();
+
+
+
+
+
+
     }
 
     @Override

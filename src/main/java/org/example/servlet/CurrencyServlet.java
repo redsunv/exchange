@@ -34,15 +34,12 @@ public class CurrencyServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
         try {
-            // Получаем код из URL: /currency/USD → "/USD" → "USD"
             String pathInfo = req.getPathInfo();
 
+            String code = pathInfo.substring(1);
+            code = code.toUpperCase();
 
 
-            String code = pathInfo.substring(1);  // убираем первый слеш
-            code = code.toUpperCase();            // в верхний регистр
-
-            //  Валидация формата
             List<String> errors = CurrencyValidator.validateCurrencyCode(code);
             if (!errors.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -50,17 +47,16 @@ public class CurrencyServlet extends HttpServlet {
                 return;
             }
 
-            //  Ищем валюту в БД
+
             Currency currency = currencyDAO.findByCode(code)
                     .orElseThrow(() -> new IllegalArgumentException("Валюта не найдена"));
 
-            // Entity → Response DTO
             CurrencyResponseDTO dto = CurrencyMapper.toResponseDTO(currency);
 
-            // DTO → JSON
+
             String json = objectMapper.writeValueAsString(dto);
 
-            //Отправляем ответ
+
             out.print(json);
             resp.setStatus(HttpServletResponse.SC_OK);  // 200
 

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class CurrencyResponseDTO {
     private Long id;
     private String code;
-    private String full_name;
+    private String fullName;
     private String sign;
 
     public Long getId() {
@@ -29,12 +29,12 @@ public class CurrencyResponseDTO {
         this.code = code;
     }
 
-    public String getFull_name() {
-        return full_name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFull_name(String full_name) {
-        this.full_name = full_name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getSign() {

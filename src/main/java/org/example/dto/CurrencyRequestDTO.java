@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CurrencyRequestDTO {
     private String code;
-    private String full_name;
+    private String fullName;
     private String sign;
 
     public String getCode() {
@@ -20,12 +20,12 @@ public class CurrencyRequestDTO {
         this.code = code;
     }
 
-    public String getFull_name() {
-        return full_name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFull_name(String full_name) {
-        this.full_name = full_name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getSign() {

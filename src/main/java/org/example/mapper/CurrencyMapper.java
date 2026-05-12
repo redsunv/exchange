@@ -12,7 +12,7 @@ public class CurrencyMapper {
         Currency currency = new Currency();
 
         currency.setCode(request.getCode());
-        currency.setFullName(request.getFull_name());
+        currency.setFullName(request.getFullName());
         currency.setSign(request.getSign());
 
         return currency;
@@ -25,7 +25,7 @@ public class CurrencyMapper {
         CurrencyResponseDTO dto = new CurrencyResponseDTO();
         dto.setId(currency.getId());
         dto.setCode(currency.getCode());
-        dto.setFull_name(currency.getFullName());
+        dto.setFullName(currency.getFullName());
         dto.setSign(currency.getSign());
 
         return dto;
