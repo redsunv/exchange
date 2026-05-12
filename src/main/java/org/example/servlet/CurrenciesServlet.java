@@ -14,8 +14,11 @@ import java.io.PrintWriter;
 
 import org.example.dto.CurrencyRequestDTO;
 import org.example.dto.CurrencyResponseDTO;
+import org.example.exception.DatabaseAccessException;
 import org.example.mapper.CurrencyMapper;
 import org.example.model.Currency;
+
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -31,18 +34,37 @@ public class CurrenciesServlet extends HttpServlet {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         PrintWriter out = resp.getWriter();
+        try {
+            // Получаем Entity из БД
+            List<Currency> currencies = currencyDAO.getAllCurrencies();
 
-        List<Currency> currencies = currencyDAO.getAllCurrencies();
+            // Преобразуем Entity → Response DTO
+            List<CurrencyResponseDTO> dtos = CurrencyMapper.toResponseDTOList(currencies);
+
+            //  DTO → JSON и отправка
+            String json = objectMapper.writeValueAsString(dtos);
+            out.print(json);
+
+            //  Устанавливаем статус
+            resp.setStatus(HttpServletResponse.SC_OK);
 
 
-
-
-
-
+        } catch (DatabaseAccessException e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.print("{\"error\": \"" + e.getMessage() + "\"}");
+            e.printStackTrace();
+        } catch (Exception e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.print("{\"error\": \"Internal server error\"}");
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        PrintWriter out = resp.getWriter();
+
     }
 }
