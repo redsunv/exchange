@@ -14,7 +14,7 @@ public class CurrenciesValidator {
                 errors.add("Код валюты должен состоять из 3-х символов");
             }
             if (!code.matches("[A-Z]{3}")) {
-                errors.add("Код валюты должен состоять из 3-x заглавных букв (A-Z)");
+                errors.add("Код валюты должен состоять из  заглавных букв (A-Z)");
             }
         }
 
