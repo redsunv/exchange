@@ -1,4 +1,4 @@
-package org.example.dao;
+package org.example.dao.currency;
 
 import java.util.List;
 import java.util.Optional;

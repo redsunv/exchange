@@ -1,4 +1,4 @@
-package org.example.dao;
+package org.example.dao.currency;
 
 import org.example.model.Currency;
 

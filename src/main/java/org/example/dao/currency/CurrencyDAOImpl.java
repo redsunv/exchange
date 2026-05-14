@@ -1,4 +1,4 @@
-package org.example.dao;
+package org.example.dao.currency;
 
 import org.example.connection.DatabaseConfig;
 import org.example.model.Currency;
@@ -95,6 +95,9 @@ public class CurrencyDAOImpl implements CurrencyDAO {
 
     @Override
     public Currency save(Currency currency) {
+        if (findByCode(currency.getCode()).isPresent()) {
+            throw new DatabaseAccessException("Валюта с кодом " + currency.getCode() + " уже существует");
+        }
             String sql = "INSERT INTO currencies (code, fullName, sign) VALUES (?, ?, ?)";
 
             try (Connection conn = DatabaseConfig.getConnection();
@@ -114,9 +117,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
                         currency.setId(rs.getLong(1));
                     }
                 }
-                if (findByCode(currency.getCode()).isPresent()) {
-                    throw new DatabaseAccessException("Валюта с кодом " + currency.getCode() + " уже существует");
-                }
+
 
                 return currency;
 

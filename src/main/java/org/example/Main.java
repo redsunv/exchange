@@ -1,7 +1,7 @@
 package org.example;
 
 import org.example.connection.DatabaseConfig;
-import org.example.dao.CurrencyDAOImpl;
+import org.example.dao.currency.CurrencyDAOImpl;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -23,9 +23,7 @@ public class Main {
         conn.close();
 
         CurrencyDAOImpl currencyDAO = new CurrencyDAOImpl();
-
-
         System.out.println(currencyDAO.getAllCurrencies());
-        System.out.println(currencyDAO.findByCode("USD"));
+
         }
 }
