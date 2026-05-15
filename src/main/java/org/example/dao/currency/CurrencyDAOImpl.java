@@ -1,6 +1,8 @@
 package org.example.dao.currency;
 
 import org.example.connection.DatabaseConfig;
+import org.example.exception.CurrencyAlreadyExistsException;
+import org.example.exception.NotFoundException;
 import org.example.model.Currency;
 import org.example.exception.DatabaseAccessException;
 
@@ -89,14 +91,14 @@ public class CurrencyDAOImpl implements CurrencyDAO {
             return Optional.empty();
 
         } catch (SQLException e) {
-            throw new DatabaseAccessException("Ошибка поиска по ID: " + id, e);
+            throw new NotFoundException("Ошибка поиска по ID: " + id, e);
         }
     }
 
     @Override
     public Currency save(Currency currency) {
         if (findByCode(currency.getCode()).isPresent()) {
-            throw new DatabaseAccessException("Валюта с кодом " + currency.getCode() + " уже существует");
+            throw new CurrencyAlreadyExistsException("Валюта с кодом " + currency.getCode() + " уже существует");
         }
             String sql = "INSERT INTO currencies (code, fullName, sign) VALUES (?, ?, ?)";
 
@@ -164,7 +166,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
             int deletedRows = statement.executeUpdate();
 
             if (deletedRows == 0) {
-                throw new DatabaseAccessException("Валюта с ID " + id + " не найдена");
+                throw new NotFoundException("Валюта с ID " + id + " не найдена");
             }
 
         } catch (SQLException e) {

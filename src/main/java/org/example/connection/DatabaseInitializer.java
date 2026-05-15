@@ -1,5 +1,7 @@
 package org.example.connection;
 
+import org.example.exception.DatabaseAccessException;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -67,7 +69,7 @@ public class DatabaseInitializer {
             statement.execute(sql);
 
         } catch (SQLException e) {
-            throw new RuntimeException("Ошибка создания таблицы: " + e.getMessage(), e);
+            throw new DatabaseAccessException("Ошибка создания таблицы: " + e.getMessage(), e);
         }
     }
 }

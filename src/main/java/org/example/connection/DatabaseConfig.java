@@ -4,7 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
+
 
 public class DatabaseConfig {
     private static final HikariDataSource DATA_SOURCE;

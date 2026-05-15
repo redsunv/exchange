@@ -18,16 +18,17 @@ public class ExchangeRateDAOImpl implements ExchangeRateDAO {
         String sql = "SELECT * FROM exchangeRate";
 
         try {
-            Connection connection= DatabaseConfig.getConnection();
+            Connection connection = DatabaseConfig.getConnection();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } {
+        }
+        {
         }
 
-        return List.of();
+        return exchangeRate;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.example.servlet;
+package org.example.servlet.currency;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.example.dao.currency.CurrencyDAO;
 import org.example.dao.currency.CurrencyDAOImpl;
 import org.example.dto.CurrencyResponseDTO;
+import org.example.exception.DatabaseAccessException;
+import org.example.exception.NotFoundException;
 import org.example.mapper.CurrencyMapper;
 import org.example.model.Currency;
 import org.example.validator.CurrencyValidator;
@@ -19,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 @WebServlet("/currency/*")
-//одна валюта
 public class CurrencyServlet extends HttpServlet {
 
     private final CurrencyDAO currencyDAO = new CurrencyDAOImpl();
@@ -49,7 +50,7 @@ public class CurrencyServlet extends HttpServlet {
 
 
             Currency currency = currencyDAO.findByCode(code)
-                    .orElseThrow(() -> new IllegalArgumentException("Валюта не найдена"));
+                    .orElseThrow(() -> new NotFoundException("Валюта не найдена"));
 
             CurrencyResponseDTO dto = CurrencyMapper.toResponseDTO(currency);
 
@@ -60,13 +61,14 @@ public class CurrencyServlet extends HttpServlet {
             out.print(json);
             resp.setStatus(HttpServletResponse.SC_OK);  // 200
 
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);  // 404
             out.print("{\"error\": \"" + e.getMessage() + "\"}");
-        } catch (Exception e) {
+        } catch (DatabaseAccessException e) {
             //Обработка всех остальных ошибок
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);  // 500
             out.print("{\"error\": \"Internal server error: " + e.getMessage() + "\"}");
+
         }
 
 

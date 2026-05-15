@@ -1,4 +1,4 @@
-package org.example.servlet;
+package org.example.servlet.currency;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +25,6 @@ import java.util.Map;
 
 
 @WebServlet("/currencies")
-//список валют
 public class CurrenciesServlet extends HttpServlet {
 
     private final CurrencyDAO currencyDAO = new CurrencyDAOImpl();
