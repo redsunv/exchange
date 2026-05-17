@@ -1,16 +1,13 @@
 package org.example.dao.exchange;
 
+import org.example.dao.currency.CrudDAO;
 import org.example.model.ExchangeRate;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ExchangeRateDAO {
+public interface ExchangeRateDAO extends CrudDAO<ExchangeRate, Long> {
+    Optional<ExchangeRate> findByCode(String baseCurrencyCode, String targetCurrencyCode);
 
-    List<ExchangeRate> findAllWithCurrencies();
-    Optional<ExchangeRate> findById(Long id);
-    ExchangeRate save(ExchangeRate exchangeRate);
-    Optional<ExchangeRate> update(ExchangeRate exchangeRate);
-    void delete(Long id);
 
 }

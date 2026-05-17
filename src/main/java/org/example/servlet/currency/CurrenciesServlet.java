@@ -38,7 +38,7 @@ public class CurrenciesServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
         try {
             // Получаем Entity из БД
-            List<Currency> currencies = currencyDAO.getAllCurrencies();
+            List<Currency> currencies = currencyDAO.getAll();
 
             // Преобразуем Entity → Response DTO
             List<CurrencyResponseDTO> dtos = CurrencyMapper.toResponseDTOList(currencies);

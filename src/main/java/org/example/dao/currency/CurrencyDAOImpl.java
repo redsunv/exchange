@@ -42,7 +42,7 @@ public class CurrencyDAOImpl implements CurrencyDAO {
     }
 
     @Override
-    public List<Currency> getAllCurrencies() {
+    public List<Currency> getAll() {
         List<Currency> currencies = new ArrayList<>();
         String sql = "SELECT * FROM currencies";
 

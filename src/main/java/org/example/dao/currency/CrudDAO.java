@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface CrudDAO<Currency, ID> {
 
-    List<Currency> getAllCurrencies();
+    List<Currency> getAll();
 
     Optional<Currency> findById(ID id);//альтернатива null
 
