@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 
-import org.example.dto.CurrencyResponseDTO;
+import org.example.dto.currency.CurrencyResponseDTO;
 import org.example.exception.DatabaseAccessException;
 import org.example.mapper.CurrencyMapper;
 import org.example.model.Currency;

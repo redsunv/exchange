@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.dao.currency.CurrencyDAO;
 import org.example.dao.currency.CurrencyDAOImpl;
-import org.example.dto.CurrencyResponseDTO;
+import org.example.dto.currency.CurrencyResponseDTO;
 import org.example.exception.DatabaseAccessException;
 import org.example.exception.NotFoundException;
 import org.example.mapper.CurrencyMapper;

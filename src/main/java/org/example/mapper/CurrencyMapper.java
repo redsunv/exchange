@@ -1,7 +1,7 @@
 package org.example.mapper;
 
-import org.example.dto.CurrencyRequestDTO;
-import org.example.dto.CurrencyResponseDTO;
+import org.example.dto.currency.CurrencyRequestDTO;
+import org.example.dto.currency.CurrencyResponseDTO;
 import org.example.model.Currency;
 
 import java.sql.ResultSet;

@@ -33,7 +33,7 @@ public class Main {
         // ТЕСТ 1: Поиск курса с ID = 1
         System.out.println("1. Поиск курса с ID = 1:");
         try {
-            Optional<ExchangeRate> result = exchangeRateDAO.findById(1L);
+            Optional<ExchangeRate> result = exchangeRateDAO.findById(2L);
 
             if (result.isPresent()) {
                 ExchangeRate rate = result.get();

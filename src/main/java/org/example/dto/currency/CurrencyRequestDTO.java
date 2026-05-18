@@ -1,25 +1,16 @@
-package org.example.dto;
+package org.example.dto.currency;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-
-public class CurrencyResponseDTO {
-    private Long id;
+public class CurrencyRequestDTO {
     private String code;
     private String fullName;
     private String sign;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getCode() {
         return code;
@@ -44,4 +35,5 @@ public class CurrencyResponseDTO {
     public void setSign(String sign) {
         this.sign = sign;
     }
+
 }

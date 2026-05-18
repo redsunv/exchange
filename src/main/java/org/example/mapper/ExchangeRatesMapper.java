@@ -1,6 +1,6 @@
 package org.example.mapper;
 
-import org.example.model.Currency;
+import org.example.dto.exchange.ExchangeRateRequestDTO;
 import org.example.model.ExchangeRate;
 
 import java.sql.ResultSet;
@@ -29,4 +29,10 @@ public class ExchangeRatesMapper {
 
         return exchangeRate;
     }
+
+    public static ExchangeRateRequestDTO toResponseDTO(ExchangeRate exchangeRate){
+        if (exchangeRate == null) return null;
+
+    }
+
 }
