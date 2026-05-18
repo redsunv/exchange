@@ -11,6 +11,7 @@ public class DatabaseInitializer {
         createCurrenciesTable();
         createExchangeRatesTable();
         insertInitialData();
+        insertExchangeRatesData();
     }
 
     private static void createCurrenciesTable() {
@@ -63,7 +64,33 @@ public class DatabaseInitializer {
 
         executeTable(sql, "Таблица exchange_rates создана");
     }
+    private static void insertExchangeRatesData() {
+        String sql = """
+        INSERT OR IGNORE INTO exchange_rates (base_currency_id, target_currency_id, rate) VALUES
+            (1, 2, 0.920000),
+            (1, 3, 0.790000),
+            (1, 4, 155.500000),
+            (2, 1, 1.087000),
+            (2, 3, 0.858700),
+            (2, 4, 169.020000),
+            (3, 1, 1.265800),
+            (3, 2, 1.164500),
+            (3, 4, 196.840000),
+            (4, 1, 0.006430),
+            (4, 2, 0.005920),
+            (4, 3, 0.005080)
+    """;
 
+        try (Connection conn = DatabaseConfig.getConnection();
+             Statement stmt = conn.createStatement()) {
+
+            int inserted = stmt.executeUpdate(sql);
+            System.out.println("Добавлено курсов валют: " + inserted);
+
+        } catch (SQLException e) {
+            System.err.println("Ошибка вставки курсов валют: " + e.getMessage());
+        }
+    }
     private static void executeTable(String sql, String s) {
         try {
             Connection connection = DatabaseConfig.getConnection();
@@ -76,3 +103,4 @@ public class DatabaseInitializer {
         }
     }
 }
+

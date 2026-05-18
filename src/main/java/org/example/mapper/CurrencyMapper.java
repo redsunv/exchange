@@ -3,13 +3,16 @@ package org.example.mapper;
 import org.example.dto.CurrencyRequestDTO;
 import org.example.dto.CurrencyResponseDTO;
 import org.example.model.Currency;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CurrencyMapper {
 
     // Request DTO → Entity
-    public static Currency toEntity(CurrencyRequestDTO request) {
+    public static Currency fromRequestToEntity(CurrencyRequestDTO request) {
         if (request == null) return null;
 
         Currency currency = new Currency();
@@ -40,5 +43,23 @@ public class CurrencyMapper {
         return currencies.stream()
                 .map(CurrencyMapper::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    public static Currency fromResultSet(ResultSet rs) throws SQLException {
+        Currency currency = new Currency();
+        currency.setId(rs.getLong("id"));
+        currency.setCode(rs.getString("code"));
+        currency.setFullName(rs.getString("fullName"));
+        currency.setSign(rs.getString("sign"));
+        return currency;
+    }
+
+    public static Currency fromResultSetWithPrefix(ResultSet rs, String prefix) throws SQLException {
+        Currency currency = new Currency();
+        currency.setId(rs.getLong(prefix + "id"));
+        currency.setCode(rs.getString(prefix + "code"));
+        currency.setFullName(rs.getString(prefix + "fullName"));
+        currency.setSign(rs.getString(prefix + "sign"));
+        return currency;
     }
 }

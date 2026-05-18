@@ -2,6 +2,7 @@ package org.example.dao.exchange;
 
 import org.example.connection.DatabaseConfig;
 import org.example.exception.DatabaseAccessException;
+import org.example.mapper.ExchangeRatesMapper;
 import org.example.model.ExchangeRate;
 
 import java.sql.*;
@@ -27,33 +28,31 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
                 er.id AS id,
                 bc.id AS base_id,
                 bc.code AS base_code,
-                bc.fullName AS base_name,
+                bc.fullName AS base_fullName,
                 bc.sign AS base_sign,
                 tc.id AS target_id,
                 tc.code AS target_code,
-                tc.fullName AS target_name,
+                tc.fullName AS target_fullName,
                 tc.sign AS target_sign,
                 er.rate AS rate
                 FROM exchange_rates er
                 INNER JOIN currencies bc ON er.base_currency_id = bc.id
                 INNER JOIN currencies tc ON er.target_currency_id = tc.id WHERE er.id=?
                 """;
-        try {
-            Connection conn = DatabaseConfig.getConnection();
-            PreparedStatement statement = conn.prepareStatement(query);
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
+            stmt.setLong(1, id);
 
-            if (resultSet.next()) {
-                return Optional.of();
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next()
+                        ? Optional.of(ExchangeRatesMapper.fromResultSetFull(rs))
+                        : Optional.empty();
             }
 
-
         } catch (SQLException e) {
-            throw new DatabaseAccessException(" " + id);
+            throw new DatabaseAccessException("Failed to find exchange rate by ID: " + id, e);
         }
-        return Optional.empty();
     }
 
     @Override
