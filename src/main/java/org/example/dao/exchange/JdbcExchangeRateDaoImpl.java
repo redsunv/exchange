@@ -167,14 +167,21 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
     public Optional<ExchangeRate> update(ExchangeRate exchangeRate) {
         String sql = "UPDATE exchange_rates SET rate = ? WHERE id = ?";
 
-        try(Connection connection = DatabaseConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
-        ) {
+        try (Connection connection = DatabaseConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+//из объекта в параметрах забираем значения и устанавливаем
+            statement.setBigDecimal(1, exchangeRate.getRate());
+            statement.setLong(2, exchangeRate.getId());
+
+            int updatedRows = statement.executeUpdate();
+            if (updatedRows == 0) {
+                return Optional.empty();
+            }
+            return Optional.of(exchangeRate);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseAccessException("Ошибка обновления курса с ID: " + exchangeRate.getId(), e);
         }
-        return Optional.empty();
     }
 
     @Override
