@@ -41,13 +41,12 @@ public class CurrenciesServlet extends HttpServlet {
             List<Currency> currencies = currencyDAO.getAll();
 
             // Преобразуем Entity → Response DTO
-            List<CurrencyResponseDTO> dtos = CurrencyMapper.toResponseDTOList(currencies);
+            List<CurrencyResponseDTO> dto = CurrencyMapper.toResponseDTOList(currencies);
 
             //  DTO → JSON и отправка
-            String json = objectMapper.writeValueAsString(dtos);
+            String json = objectMapper.writeValueAsString(dto);
             out.print(json);
 
-            //  Устанавливаем статус
             resp.setStatus(HttpServletResponse.SC_OK);
 
 

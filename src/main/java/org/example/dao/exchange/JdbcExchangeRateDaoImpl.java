@@ -165,6 +165,15 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
 
     @Override
     public Optional<ExchangeRate> update(ExchangeRate exchangeRate) {
+        String sql = "UPDATE exchange_rates SET rate = ? WHERE id = ?";
+
+        try(Connection connection = DatabaseConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return Optional.empty();
     }
 
