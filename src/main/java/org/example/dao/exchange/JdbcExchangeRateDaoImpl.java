@@ -6,7 +6,6 @@ import org.example.exception.NotFoundException;
 import org.example.mapper.ExchangeRateMapper;
 import org.example.model.ExchangeRate;
 import org.example.validator.ExchangeRateValidator;
-import org.sqlite.SQLiteErrorCode;
 
 
 import java.sql.*;
@@ -170,7 +169,28 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
     }
 
     @Override
-    public void delete(Long aLong) {
+    public void delete(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id can not be null");
+
+        }
+        String sql = "DELETE FROM exchange_rates  WHERE id =? ";
+
+        try
+                (Connection connection = DatabaseConfig.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(sql)) {
+
+
+            statement.setLong(1, id);
+            int deletedRows = statement.executeUpdate();
+
+            if (deletedRows == 0) {
+                throw new NotFoundException("Обменный курс " + id + " не найден");
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseAccessException("Ошибка удаления таблицы", e);
+        }
 
     }
 }
