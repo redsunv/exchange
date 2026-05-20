@@ -1,9 +1,10 @@
 package org.example.dto.currency;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+@AllArgsConstructor
 @NoArgsConstructor
 
 public class CurrencyResponseDTO {

@@ -2,10 +2,14 @@ package org.example.dao.exchange;
 
 import org.example.connection.DatabaseConfig;
 import org.example.exception.DatabaseAccessException;
-import org.example.mapper.ExchangeRatesMapper;
+import org.example.mapper.ExchangeRateMapper;
 import org.example.model.ExchangeRate;
+import org.example.validator.ExchangeRateValidator;
+import org.sqlite.SQLiteErrorCode;
+
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,11 +17,41 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
 
     @Override
     public Optional<ExchangeRate> findByCode(String baseCurrencyCode, String targetCurrencyCode) {
+
         return Optional.empty();
     }
 
     @Override
     public List<ExchangeRate> getAll() {
+        List<ExchangeRate> exchangeRates = new ArrayList<>();
+        final String sql = """
+                SELECT
+                er.id AS id,
+                bc.id AS base_id,
+                bc.code AS base_code,
+                bc.fullName AS base_fullName,
+                bc.sign AS base_sign,
+                tc.id AS target_id,
+                tc.code AS target_code,
+                tc.fullName AS target_fullName,
+                tc.sign AS target_sign,
+                er.rate AS rate
+                FROM exchange_rates er
+                INNER JOIN currencies bc ON er.base_currency_id = bc.id
+                INNER JOIN currencies tc ON er.target_currency_id = tc.id
+                ORDER BY er.id;
+                """;
+
+
+        try {
+            Connection connection = DatabaseConfig.getConnection();
+            Statement  statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return List.of();
     }
 
@@ -45,9 +79,15 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
             stmt.setLong(1, id);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next()
-                        ? Optional.of(ExchangeRatesMapper.fromResultSetFull(rs))
-                        : Optional.empty();
+
+                if (rs.next()) {
+
+                    ExchangeRate rate = ExchangeRateMapper.fromResultSetFull(rs);
+                    return Optional.of(rate);
+                } else {
+
+                    return Optional.empty();
+                }
             }
 
         } catch (SQLException e) {
@@ -57,7 +97,35 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
 
     @Override
     public ExchangeRate save(ExchangeRate exchangeRate) {
-        return null;
+
+        ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
+        exchangeRateValidator.validateDifferentPairs(exchangeRate.getBaseCurrencyId(), exchangeRate.getTargetCurrencyId());
+
+        String sql = "INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) VALUES (?, ?, ?) RETURNING id";
+
+        try (Connection connection = DatabaseConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setLong(1, exchangeRate.getBaseCurrencyId());
+            statement.setLong(2, exchangeRate.getTargetCurrencyId());
+            statement.setBigDecimal(3, exchangeRate.getRate());
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Long Id = resultSet.getLong("id");
+                    exchangeRate.setId(Id);
+                    return exchangeRate;
+                } else {
+                    throw new DatabaseAccessException("Ошибка сохранения курса в базу данных. ID не получен");
+                }
+            }
+        } catch (SQLException e) {
+
+            if (e.getMessage().contains("UNIQUE constraint failed")) {
+                throw new DatabaseAccessException("Курс для этой пары валют уже существует");
+            }
+            throw new DatabaseAccessException("Ошибка при сохранении курса: " + e.getMessage(), e);
+        }
     }
 
     @Override

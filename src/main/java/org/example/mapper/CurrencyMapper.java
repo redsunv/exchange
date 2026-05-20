@@ -38,7 +38,7 @@ public class CurrencyMapper {
 
     // List<Entity> → List<Response DTO>
     public static List<CurrencyResponseDTO> toResponseDTOList(List<Currency> currencies) {
-        if (currencies == null) return List.of();
+        if (currencies == null || currencies.isEmpty()) return List.of();
 
         return currencies.stream()
                 .map(CurrencyMapper::toResponseDTO)

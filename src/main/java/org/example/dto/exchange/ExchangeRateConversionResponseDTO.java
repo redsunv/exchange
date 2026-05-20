@@ -5,7 +5,7 @@ import org.example.dto.currency.CurrencyResponseDTO;
 
 import java.math.BigDecimal;
 @Data
-public class ExchangeConversionResponseDTO {
+public class ExchangeRateConversionResponseDTO {
     private CurrencyResponseDTO baseCurrency;
     private CurrencyResponseDTO  targetCurrency;
     private BigDecimal rate;
