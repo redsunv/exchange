@@ -2,6 +2,7 @@ package org.example.dao.exchange;
 
 import org.example.connection.DatabaseConfig;
 import org.example.exception.DatabaseAccessException;
+import org.example.exception.NotFoundException;
 import org.example.mapper.ExchangeRateMapper;
 import org.example.model.ExchangeRate;
 import org.example.validator.ExchangeRateValidator;
@@ -17,6 +18,39 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
 
     @Override
     public Optional<ExchangeRate> findByCode(String baseCurrencyCode, String targetCurrencyCode) {
+        final String sql = """
+                SELECT
+                er.id AS id,
+                bc.id AS base_id,
+                bc.code AS base_code,
+                bc.fullName AS base_fullName,
+                bc.sign AS base_sign,
+                tc.id AS target_id,
+                tc.code AS target_code,
+                tc.fullName AS target_fullName,
+                tc.sign AS target_sign,
+                er.rate AS rate
+                FROM exchange_rates er
+                INNER JOIN currencies bc ON er.base_currency_id = bc.id
+                INNER JOIN currencies tc ON er.target_currency_id = tc.id 
+                WHERE bc.code=? AND tc.code=?
+                """;
+
+        try {
+            Connection connection = DatabaseConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setString(1, baseCurrencyCode);
+            statement.setString(2, targetCurrencyCode);
+
+            ResultSet resultSet =
+                    statement.executeQuery();
+            if (resultSet.next()) {
+                return Optional.of(ExchangeRateMapper.fromResultSetFull(resultSet));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseAccessException("Ошибка поиска курса по кодам", e);
+        }
 
         return Optional.empty();
     }
@@ -42,17 +76,19 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
                 ORDER BY er.id;
                 """;
 
-
         try {
             Connection connection = DatabaseConfig.getConnection();
-            Statement  statement = connection.createStatement();
+            Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
 
+            while (resultSet.next()) {
+                exchangeRates.add(ExchangeRateMapper.fromResultSetFull(resultSet));
 
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new NotFoundException("Ошибка получения курсов", e);
         }
-        return List.of();
+        return exchangeRates;
     }
 
     @Override
