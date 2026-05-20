@@ -36,18 +36,18 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
                 WHERE bc.code=? AND tc.code=?
                 """;
 
-        try {
-            Connection connection = DatabaseConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
+        try (Connection connection = DatabaseConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, baseCurrencyCode);
             statement.setString(2, targetCurrencyCode);
 
-            ResultSet resultSet =
-                    statement.executeQuery();
-            if (resultSet.next()) {
-                return Optional.of(ExchangeRateMapper.fromResultSetFull(resultSet));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(ExchangeRateMapper.fromResultSetFull(resultSet));
+                }
             }
+
         } catch (SQLException e) {
             throw new DatabaseAccessException("Ошибка поиска курса по кодам", e);
         }
