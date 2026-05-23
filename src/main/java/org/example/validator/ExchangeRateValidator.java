@@ -7,6 +7,8 @@ import org.example.exception.DatabaseAccessException;
 import org.example.exception.ValidationException;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExchangeRateValidator {
 
@@ -17,7 +19,7 @@ public class ExchangeRateValidator {
 
     }
 
-    public void validateCreateExchangeRate(String baseCode, String targetCode, BigDecimal rate,
+    public static void validateCreateExchangeRate(String baseCode, String targetCode, BigDecimal rate,
                                            ExchangeRateDAO exchangeRateDAO,
                                            CurrencyDAO currencyDAO) {
         if (baseCode.equals(targetCode)) {
@@ -37,6 +39,29 @@ public class ExchangeRateValidator {
 
 
     }
+    public static List<String> validateExchangeRateCode(String baseCode, String targetCode){
+        List<String > errors = new ArrayList<>();
+
+        if (baseCode == null || baseCode.isBlank()) {
+            errors.add("Требуется код валюты");
+        } else {
+            if (baseCode.length() != 3) {
+                errors.add("Код валюты должен состоять из 3-х символов");
+            }
+            if (!baseCode.matches("[A-Z]{3}")) {
+                errors.add("Код валюты должен состоять из  заглавных букв (A-Z)");
+            }
+        }  if (targetCode == null || targetCode.isBlank()) {
+            errors.add("Требуется код валюты");
+        } else {
+            if (targetCode.length() != 3) {
+                errors.add("Код валюты должен состоять из 3-х символов");
+            }
+            if (!targetCode.matches("[A-Z]{3}")) {
+                errors.add("Код валюты должен состоять из  заглавных букв (A-Z)");
+            }
+        }
+        return errors;
+    }}
 
 
-}
