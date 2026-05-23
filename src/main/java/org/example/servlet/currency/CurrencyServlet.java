@@ -65,7 +65,6 @@ public class CurrencyServlet extends HttpServlet {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);  // 404
             out.print("{\"error\": \"" + e.getMessage() + "\"}");
         } catch (DatabaseAccessException e) {
-            //Обработка всех остальных ошибок
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);  // 500
             out.print("{\"error\": \"Internal server error: " + e.getMessage() + "\"}");
 

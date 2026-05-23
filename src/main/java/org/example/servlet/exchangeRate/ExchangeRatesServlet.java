@@ -55,6 +55,11 @@ public class ExchangeRatesServlet extends HttpServlet {
             String baseCode = req.getParameter("baseCurrencyCode");
             String targetCode = req.getParameter("targetCurrencyCode");
             String rateParam = req.getParameter("rate");
+            if (rateParam == null || rateParam.isBlank()) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.write("{\"message\": \"Missing parameter: rate\"}");
+                return;
+            }
             BigDecimal rate = new BigDecimal(rateParam);
 
             List<String> formatErrors = ExchangeRateValidator.validateExchangeRateCode(baseCode, targetCode);

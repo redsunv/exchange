@@ -37,6 +37,10 @@ public class ExchangeRateValidator {
                     " не найдена");
         }
 
+        if (rate == null|| rate.compareTo(BigDecimal.ZERO) <= 0){
+            throw new ValidationException("Введите корректный курс");
+        }
+
 
     }
     public static List<String> validateExchangeRateCode(String baseCode, String targetCode){
@@ -61,6 +65,8 @@ public class ExchangeRateValidator {
                 errors.add("Код валюты должен состоять из  заглавных букв (A-Z)");
             }
         }
+
+
         return errors;
     }}
 
