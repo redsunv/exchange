@@ -1,13 +1,13 @@
 package org.example.model;
 
 import lombok.AllArgsConstructor;
+
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class ExchangeRate {
     private Long id;
     private Long baseCurrencyId;
@@ -41,6 +41,14 @@ public class ExchangeRate {
         this.targetCurrencyId = targetCurrencyId;
     }
 
+    public Currency getBaseCurrency() {
+        return baseCurrency;
+    }
+
+    public void setBaseCurrency(Currency baseCurrency) {
+        this.baseCurrency = baseCurrency;
+    }
+
     public BigDecimal getRate() {
         return rate;
     }
@@ -49,27 +57,11 @@ public class ExchangeRate {
         this.rate = rate;
     }
 
-    public Currency getBaseCurrency() {
-        return baseCurrency;
-    }
-
     public Currency getTargetCurrency() {
         return targetCurrency;
     }
 
-    public void setBaseCurrency(Currency baseCurrency) {
-        this.baseCurrency = baseCurrency;
-
-        if (baseCurrency != null) {
-            this.baseCurrencyId = baseCurrency.getId();
-        }
-    }
-
     public void setTargetCurrency(Currency targetCurrency) {
         this.targetCurrency = targetCurrency;
-
-        if (targetCurrency != null) {
-            this.targetCurrencyId = targetCurrency.getId();
-        }
     }
 }

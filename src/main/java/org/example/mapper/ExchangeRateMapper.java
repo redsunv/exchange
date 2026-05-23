@@ -1,12 +1,15 @@
 package org.example.mapper;
 
 import org.example.dto.exchange.ExchangeRateConversionResponseDTO;
+import org.example.dto.exchange.ExchangeRateCreateRequestDTO;
+import org.example.dto.exchange.ExchangeRateRequestDTO;
 import org.example.dto.exchange.ExchangeRateResponseDTO;
 import org.example.model.ExchangeRate;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Currency;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,17 +50,18 @@ public class ExchangeRateMapper {
         return responseDTO;
     }
 
-    public static List<ExchangeRateResponseDTO> toResponseDTOList(List<ExchangeRate> exchangeRates){
-        if (exchangeRates == null|| exchangeRates.isEmpty())
+    public static List<ExchangeRateResponseDTO> toResponseDTOList(List<ExchangeRate> exchangeRates) {
+        if (exchangeRates == null || exchangeRates.isEmpty())
             return List.of();
         return exchangeRates.stream().map(ExchangeRateMapper::toResponseDTO).collect(Collectors.toList());
     }
 
-    public static ExchangeRateConversionResponseDTO toConversionResponseDTO(ExchangeRate exchangeRate, BigDecimal amount){
+    public static ExchangeRateConversionResponseDTO toConversionResponseDTO(ExchangeRate exchangeRate, BigDecimal amount) {
 
         return null;
     }
 
 
+    }
 
-}
+
