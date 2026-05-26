@@ -5,6 +5,7 @@ import org.example.dao.currency.CurrencyDAOImpl;
 import org.example.dao.exchange.ExchangeRateDAO;
 import org.example.dao.exchange.JdbcExchangeRateDaoImpl;
 import org.example.dto.exchange.ExchangeRateResponseDTO;
+import org.example.exception.NotFoundException;
 import org.example.mapper.ExchangeRateMapper;
 import org.example.model.Currency;
 import org.example.model.ExchangeRate;
@@ -12,6 +13,7 @@ import org.example.validator.ExchangeRateValidator;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 
 public class ExchangeRateService {
@@ -41,6 +43,14 @@ public class ExchangeRateService {
 
 
         return ExchangeRateMapper.toResponseDTO(saved);
+    }
+
+    public ExchangeRateResponseDTO getExchangeRate(String baseCode, String targetCode) {
+        ExchangeRateValidator.validateDifferentPairs(baseCode, targetCode);
+        ExchangeRate rate = exchangeRateDAO.findByCode(baseCode, targetCode)
+                .orElseThrow(() -> new NotFoundException("Обменный курс для пары " + baseCode + targetCode + " не найден"));
+
+        return ExchangeRateMapper.toResponseDTO(rate);
     }
 }
 

@@ -12,16 +12,23 @@ import java.util.List;
 
 public class ExchangeRateValidator {
 
-    public void validateDifferentPairs(Long baseCurrencyId, Long targetCurrencyId) {
+    public static void validateDifferentPairsById(Long baseCurrencyId, Long targetCurrencyId) {
         if (baseCurrencyId.equals(targetCurrencyId)) {
-            throw new DatabaseAccessException("The base and target currencies must be different");
+            throw new DatabaseAccessException("Валюты должны быть разными");
+        }
+
+    }
+
+    public static void validateDifferentPairs(String baseCode, String targetCode) {
+        if (baseCode.equals(targetCode)) {
+            throw new DatabaseAccessException("Валюты должны быть разными");
         }
 
     }
 
     public static void validateCreateExchangeRate(String baseCode, String targetCode, BigDecimal rate,
-                                           ExchangeRateDAO exchangeRateDAO,
-                                           CurrencyDAO currencyDAO) {
+                                                  ExchangeRateDAO exchangeRateDAO,
+                                                  CurrencyDAO currencyDAO) {
         if (baseCode.equals(targetCode)) {
             throw new ValidationException("Валюты должны быть разными");
         }
@@ -37,14 +44,15 @@ public class ExchangeRateValidator {
                     " не найдена");
         }
 
-        if (rate == null|| rate.compareTo(BigDecimal.ZERO) <= 0){
+        if (rate == null || rate.compareTo(BigDecimal.ZERO) <= 0) {
             throw new ValidationException("Введите корректный курс");
         }
 
 
     }
-    public static List<String> validateExchangeRateCode(String baseCode, String targetCode){
-        List<String > errors = new ArrayList<>();
+
+    public static List<String> validateExchangeRateCode(String baseCode, String targetCode) {
+        List<String> errors = new ArrayList<>();
 
         if (baseCode == null || baseCode.isBlank()) {
             errors.add("Требуется код валюты");
@@ -55,7 +63,8 @@ public class ExchangeRateValidator {
             if (!baseCode.matches("[A-Z]{3}")) {
                 errors.add("Код валюты должен состоять из  заглавных букв (A-Z)");
             }
-        }  if (targetCode == null || targetCode.isBlank()) {
+        }
+        if (targetCode == null || targetCode.isBlank()) {
             errors.add("Требуется код валюты");
         } else {
             if (targetCode.length() != 3) {
@@ -68,6 +77,12 @@ public class ExchangeRateValidator {
 
 
         return errors;
-    }}
+
+    }
+
+    // пара этих кодов должна быть
+
+
+}
 
 

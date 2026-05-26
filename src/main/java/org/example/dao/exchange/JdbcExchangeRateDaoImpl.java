@@ -134,7 +134,7 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
     public ExchangeRate save(ExchangeRate exchangeRate) {
 
         ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
-        exchangeRateValidator.validateDifferentPairs(exchangeRate.getBaseCurrencyId(), exchangeRate.getTargetCurrencyId());
+        exchangeRateValidator.validateDifferentPairsById(exchangeRate.getBaseCurrencyId(), exchangeRate.getTargetCurrencyId());
 
         String sql = "INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) VALUES (?, ?, ?) RETURNING id";
 
