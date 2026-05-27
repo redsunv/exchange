@@ -80,7 +80,7 @@ public class ExchangeRateValidator {
 
     }
 
-    // пара этих кодов должна быть
+
 
 
 }
