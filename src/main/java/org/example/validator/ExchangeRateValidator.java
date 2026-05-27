@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.System.out;
+
 public class ExchangeRateValidator {
 
     public static void validateDifferentPairsById(Long baseCurrencyId, Long targetCurrencyId) {
@@ -80,9 +82,39 @@ public class ExchangeRateValidator {
 
     }
 
+    public static List<String> validateRequestParameters(String from, String to, String amount) {
+        List<String> errors = new ArrayList<>();
 
+        if (from == null || from.isBlank()) {
+            errors.add("Нет параметров: from");
+        } else if (from.length() != 3 || !from.matches("[A-Z]{3}")) {
+            errors.add("Код валюты " + from + "должен состоять из 3-х букв");
+        }
 
+        if (to == null || to.isBlank()) {
+            errors.add("Нет параметров: from");
+        } else if (to.length() != 3 || !to.matches("[A-Z]{3}")) {
+            errors.add("Код валюты " + to + "должен состоять из 3-х букв");
+        }
+
+        if (amount == null || amount.isBlank()) {
+            errors.add("Нет параметров: amount");
+        } else {
+            try {
+                BigDecimal amountValue = new BigDecimal(amount);
+                if (amountValue.compareTo(BigDecimal.ZERO) <= 0) {
+                    errors.add("Amount должно быть больше 0");
+                }
+            } catch (NumberFormatException e) {
+                errors.add("Неверный формат " + amount);
+            }
+        }
+        return errors;
+    }
 
 }
+
+
+
 
 
