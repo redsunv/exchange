@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.System.out;
 
 public class ExchangeRateValidator {
 
@@ -96,7 +95,9 @@ public class ExchangeRateValidator {
         } else if (to.length() != 3 || !to.matches("[A-Z]{3}")) {
             errors.add("Код валюты " + to + "должен состоять из 3-х букв");
         }
-
+        if (from != null && from.equals(to)) {
+            errors.add("Валюты должны быть разными");
+        }
         if (amount == null || amount.isBlank()) {
             errors.add("Нет параметров: amount");
         } else {
@@ -112,9 +113,6 @@ public class ExchangeRateValidator {
         return errors;
     }
 
+
 }
-
-
-
-
 

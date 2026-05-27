@@ -59,14 +59,15 @@ public class ExchangeService {
             return Optional.empty();
         }
         ExchangeRate usdBase = usdToBaseCurrency.get();
-        ExchangeRate usdTarget = usdToBaseCurrency.get();
+        ExchangeRate usdTarget = usdToTargetCurrency.get();
 
-
+        BigDecimal fromToUsd = BigDecimal.ONE.divide(usdBase.getRate(), 6, RoundingMode.HALF_UP);
+        BigDecimal rate = fromToUsd.multiply(usdTarget.getRate());
         ExchangeRate crossRate = new ExchangeRate();
 
-        crossRate.setBaseCurrency(usdBase.getBaseCurrency());
+        crossRate.setBaseCurrency(usdBase.getTargetCurrency());
         crossRate.setTargetCurrency(usdTarget.getTargetCurrency());
-        crossRate.setRate(usdBase.getRate().multiply(usdTarget.getRate()));
+        crossRate.setRate(rate);
 
         return Optional.of(crossRate);
     }

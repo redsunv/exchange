@@ -64,22 +64,39 @@ public class DatabaseInitializer {
 
         executeTable(sql, "Таблица exchange_rates создана");
     }
+
     private static void insertExchangeRatesData() {
         String sql = """
-        INSERT OR IGNORE INTO exchange_rates (base_currency_id, target_currency_id, rate) VALUES
-            (1, 2, 0.920000),
-            (1, 3, 0.790000),
-            (1, 4, 155.500000),
-            (2, 1, 1.087000),
-            (2, 3, 0.858700),
-            (2, 4, 169.020000),
-            (3, 1, 1.265800),
-            (3, 2, 1.164500),
-            (3, 4, 196.840000),
-            (4, 1, 0.006430),
-            (4, 2, 0.005920),
-            (4, 3, 0.005080)
-    """;
+                 INSERT OR IGNORE INTO exchange_rates (base_currency_id, target_currency_id, rate) VALUES
+                -- USD курсы
+                (1, 2, 0.920000),   -- USD to EUR
+                (1, 3, 90.500000),  -- USD to RUB
+                (1, 4, 0.790000),   -- USD to GBP
+                (1, 5, 155.500000), -- USD to JPY
+                
+                -- EUR курсы
+                (2, 1, 1.087000),   -- EUR to USD
+                (2, 3, 100.000000), -- EUR to RUB
+                (2, 4, 0.858700),   -- EUR to GBP
+                (2, 5, 169.020000), -- EUR to JPY
+                
+                -- RUB курсы
+                (3, 1, 0.011050),   -- RUB to USD
+                (3, 2, 0.010000),   -- RUB to EUR
+                (3, 4, 0.008587),   -- RUB to GBP
+                (3, 5, 1.720000),   -- RUB to JPY
+                
+                -- GBP курсы
+                (4, 1, 1.265800),   -- GBP to USD
+                (4, 2, 1.164500),   -- GBP to EUR
+                (4, 3, 116.450000), -- GBP to RUB
+                (4, 5, 196.840000), -- GBP to JPY
+                
+                -- JPY курсы
+                (5, 1, 0.006430),   -- JPY to USD
+                (5, 2, 0.005920),   -- JPY to EUR
+                (5, 3, 0.581400),   -- JPY to RUB
+                (5, 4, 0.005080)    -- JPY to GBP""";
 
         try (Connection conn = DatabaseConfig.getConnection();
              Statement stmt = conn.createStatement()) {
@@ -91,6 +108,7 @@ public class DatabaseInitializer {
             System.err.println("Ошибка вставки курсов валют: " + e.getMessage());
         }
     }
+
     private static void executeTable(String sql, String s) {
         try {
             Connection connection = DatabaseConfig.getConnection();
