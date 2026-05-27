@@ -92,7 +92,7 @@ public class ExchangeRateValidator {
         }
 
         if (to == null || to.isBlank()) {
-            errors.add("Нет параметров: from");
+            errors.add("Нет параметров: to");
         } else if (to.length() != 3 || !to.matches("[A-Z]{3}")) {
             errors.add("Код валюты " + to + "должен состоять из 3-х букв");
         }

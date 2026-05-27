@@ -8,18 +8,29 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.dao.exchange.ExchangeRateDAO;
 import org.example.dao.exchange.JdbcExchangeRateDaoImpl;
+import org.example.dto.exchange.ExchangeRateConversionResponseDTO;
+
+import org.example.dto.exchange.ExchangeRateRequestDTO;
+import org.example.exception.NotFoundException;
+import org.example.exception.ValidationException;
+import org.example.service.ExchangeService;
+
+import org.example.validator.ExchangeRateValidator;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.util.List;
 
 @WebServlet("/exchange/*")
 public class ExchangeServlet extends HttpServlet {
 
-    ExchangeRateDAO exchangeRateDAO = new JdbcExchangeRateDaoImpl();
+    ExchangeService service = new ExchangeService();
     ObjectMapper objectMapper = new ObjectMapper();
 
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         PrintWriter out = resp.getWriter();
@@ -28,10 +39,42 @@ public class ExchangeServlet extends HttpServlet {
         try {
             String from = req.getParameter("from");
             String to = req.getParameter("to");
-            String amount = req.getParameter("amount");
+            String amountParam = req.getParameter("amount");
+
+
+            List<String> errors = ExchangeRateValidator.validateRequestParameters(from, to, amountParam);
+            if (!errors.isEmpty()) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.write("{\"message\": \"" + String.join(", ", errors) + "\"}");
+                return;
+            }
+
+            BigDecimal amount = new BigDecimal(amountParam);
+
+            ExchangeRateRequestDTO requestDTO = new ExchangeRateRequestDTO();
+            requestDTO.setBaseCurrency(from);
+            requestDTO.setTargetCurrency(to);
+            requestDTO.setAmount(amount);
+
+            ExchangeRateConversionResponseDTO responseDTO = service.exchange(requestDTO);
+
+
+            String json = objectMapper.writeValueAsString(responseDTO);
+            resp.setStatus(HttpServletResponse.SC_OK);
+            out.write(json);
+
+        } catch (NotFoundException e) {
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            out.write("{\"message\": \"" + e.getMessage() + "\"}");
+
+        } catch (ValidationException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.write("{\"message\": \"" + e.getMessage() + "\"}");
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.write("{\"message\": \"Ошибка сервера: " + e.getMessage() + "\"}");
+            e.printStackTrace();
         }
     }
 }
