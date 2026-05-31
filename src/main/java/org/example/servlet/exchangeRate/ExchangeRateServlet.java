@@ -125,7 +125,19 @@ public class ExchangeRateServlet extends HttpServlet {
                 out.write("{\"message\": \"Missing parameter: rate\"}");
                 return;
             }
-            BigDecimal rate = new BigDecimal(rateParam);
+                rateParam = rateParam.trim().replace(',', '.').replaceAll("\\s", "");
+
+                BigDecimal rate;
+                try {
+                    rate = new BigDecimal(rateParam);
+                    if (rate.compareTo(BigDecimal.ZERO) <= 0) {
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException e) {
+                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    out.write("{\"message\": \"Неверный формат курса. Используйте точку (например, 0.11)\"}");
+                    return;
+                }
 
             ExchangeRateResponseDTO dto = service.upDateExchangeRate(baseCode,targetCode,rate);
             String json = objectMapper.writeValueAsString(dto);

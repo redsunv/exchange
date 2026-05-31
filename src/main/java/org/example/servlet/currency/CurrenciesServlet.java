@@ -71,7 +71,7 @@ public class CurrenciesServlet extends HttpServlet {
 
         try {
             String code = req.getParameter("code");
-            String fullName = req.getParameter("fullName");
+            String fullName = req.getParameter("name");
             String sign = req.getParameter("sign");
 
             if (code != null) code = code.trim().toUpperCase();
@@ -81,7 +81,7 @@ public class CurrenciesServlet extends HttpServlet {
             List<String> errors = CurrenciesValidator.validateCurrenciesCode(code, fullName, sign);
             if (!errors.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                out.print(objectMapper.writeValueAsString(Map.of("errors", errors)));
+                out.print(objectMapper.writeValueAsString(Map.of("Неверный формат", errors)));
                 return;
             }
 

@@ -1,10 +1,14 @@
 package org.example.dto.exchange;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.dto.currency.CurrencyResponseDTO;
 
 import java.math.BigDecimal;
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExchangeRateResponseDTO {
@@ -13,35 +17,4 @@ public class ExchangeRateResponseDTO {
     private CurrencyResponseDTO targetCurrency;
     private BigDecimal rate;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public CurrencyResponseDTO getBaseCurrency() {
-        return baseCurrency;
-    }
-
-    public void setBaseCurrency(CurrencyResponseDTO baseCurrency) {
-        this.baseCurrency = baseCurrency;
-    }
-
-    public CurrencyResponseDTO getTargetCurrency() {
-        return targetCurrency;
-    }
-
-    public void setTargetCurrency(CurrencyResponseDTO targetCurrency) {
-        this.targetCurrency = targetCurrency;
-    }
-
-    public BigDecimal getRate() {
-        return rate;
-    }
-
-    public void setRate(BigDecimal rate) {
-        this.rate = rate;
-    }
 }

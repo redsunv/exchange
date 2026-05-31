@@ -28,8 +28,7 @@ public class ExchangeRateService {
     }
 
     public ExchangeRateResponseDTO createNewExchangeRate(String baseCode, String targetCode, BigDecimal rate) {
-
-        ExchangeRateValidator.validateCreateExchangeRate(baseCode, targetCode, rate, exchangeRateDAO, currencyDAO);
+             ExchangeRateValidator.validateCreateExchangeRate(baseCode, targetCode, rate, exchangeRateDAO, currencyDAO);
 
         Currency baseCurrency = currencyDAO.findByCode(baseCode).get();
         Currency targetCurrency = currencyDAO.findByCode(targetCode).get();

@@ -60,12 +60,25 @@ public class ExchangeRatesServlet extends HttpServlet {
                 out.write("{\"message\": \"Missing parameter: rate\"}");
                 return;
             }
-            BigDecimal rate = new BigDecimal(rateParam);
 
             List<String> formatErrors = ExchangeRateValidator.validateExchangeRateCode(baseCode, targetCode);
             if (!formatErrors.isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 out.write("{\"message\": \"" + String.join(", ", formatErrors) + "\"}");
+                return;
+            }
+
+            rateParam = rateParam.trim().replace(',', '.').replaceAll("\\s", "");
+
+            BigDecimal rate;
+            try {
+                rate = new BigDecimal(rateParam);
+                if (rate.compareTo(BigDecimal.ZERO) <= 0) {
+                    throw new NumberFormatException();
+                }
+            } catch (NumberFormatException e) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.write("{\"message\": \"Неверный формат курса.\"}");
                 return;
             }
             ExchangeRateResponseDTO response = exchangeRateService.createNewExchangeRate(baseCode, targetCode, rate);
