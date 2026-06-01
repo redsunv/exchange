@@ -163,20 +163,41 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
 
     @Override
     public Optional<ExchangeRate> update(ExchangeRate exchangeRate) {
+         System.out.println("=== UPDATE METHOD CALLED ===");
+        System.out.println("ExchangeRate object ID: " + exchangeRate.getId());
+        System.out.println("ExchangeRate object rate: " + exchangeRate.getRate());
+        System.out.println("ExchangeRate object (full): " + exchangeRate);
+
         String sql = "UPDATE exchange_rates SET rate = ? WHERE id = ?";
+        System.out.println("SQL: " + sql);
 
         try (Connection connection = DatabaseConfig.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            System.out.println("Setting rate: " + exchangeRate.getRate());
             statement.setBigDecimal(1, exchangeRate.getRate());
+
+            System.out.println("Setting id: " + exchangeRate.getId());
             statement.setLong(2, exchangeRate.getId());
 
+            System.out.println("Executing update...");
             int updatedRows = statement.executeUpdate();
+            System.out.println("Updated rows: " + updatedRows);
+
             if (updatedRows == 0) {
+                System.out.println("No rows updated - returning Optional.empty()");
                 return Optional.empty();
             }
+
+            System.out.println("Update successful - returning ExchangeRate");
             return Optional.of(exchangeRate);
 
         } catch (SQLException e) {
+            System.err.println("SQL EXCEPTION in update!");
+            System.err.println("Message: " + e.getMessage());
+            System.err.println("SQL State: " + e.getSQLState());
+            System.err.println("Error Code: " + e.getErrorCode());
+            e.printStackTrace();
             throw new DatabaseAccessException("Ошибка обновления курса с ID: " + exchangeRate.getId(), e);
         }
     }
