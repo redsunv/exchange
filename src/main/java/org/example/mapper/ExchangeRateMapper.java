@@ -15,14 +15,6 @@ import java.util.stream.Collectors;
 
 public class ExchangeRateMapper {
 
-    public static ExchangeRate fromResultSet(ResultSet rs) throws SQLException {
-        ExchangeRate exchangeRate = new ExchangeRate();
-        exchangeRate.setId(rs.getLong("id"));
-        exchangeRate.setBaseCurrencyId(rs.getLong("base_currency_id"));
-        exchangeRate.setTargetCurrencyId(rs.getLong("target_currency_id"));
-        exchangeRate.setRate(rs.getBigDecimal("rate"));
-        return exchangeRate;
-    }
 
     public static ExchangeRate fromResultSetFull(ResultSet rs) throws SQLException {
         ExchangeRate exchangeRate = new ExchangeRate();
@@ -54,11 +46,6 @@ public class ExchangeRateMapper {
         if (exchangeRates == null || exchangeRates.isEmpty())
             return List.of();
         return exchangeRates.stream().map(ExchangeRateMapper::toResponseDTO).collect(Collectors.toList());
-    }
-
-    public static ExchangeRateConversionResponseDTO toConversionResponseDTO(ExchangeRate exchangeRate, BigDecimal amount) {
-
-        return null;
     }
 
 

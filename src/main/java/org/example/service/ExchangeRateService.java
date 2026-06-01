@@ -4,8 +4,6 @@ import org.example.dao.currency.CurrencyDAO;
 import org.example.dao.currency.CurrencyDAOImpl;
 import org.example.dao.exchange.ExchangeRateDAO;
 import org.example.dao.exchange.JdbcExchangeRateDaoImpl;
-import org.example.dto.exchange.ExchangeRateConversionResponseDTO;
-import org.example.dto.exchange.ExchangeRateRequestDTO;
 import org.example.dto.exchange.ExchangeRateResponseDTO;
 import org.example.exception.DatabaseAccessException;
 import org.example.exception.NotFoundException;

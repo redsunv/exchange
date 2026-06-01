@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class DatabaseConfig {
     private static final HikariDataSource DATA_SOURCE;
-    private static final String DB_URL = "jdbc:sqlite:C:/Users/pronkin/SQLite/exchange.db";
+    private static final String DB_URL ="jdbc:sqlite:exchange.db";
     private static final String DRIVER = "org.sqlite.JDBC";
 
     static {

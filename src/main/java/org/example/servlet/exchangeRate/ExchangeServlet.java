@@ -6,8 +6,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.dao.exchange.ExchangeRateDAO;
-import org.example.dao.exchange.JdbcExchangeRateDaoImpl;
 import org.example.dto.exchange.ExchangeRateConversionResponseDTO;
 
 import org.example.dto.exchange.ExchangeRateRequestDTO;

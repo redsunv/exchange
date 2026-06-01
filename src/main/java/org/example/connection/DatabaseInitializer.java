@@ -109,13 +109,11 @@ public class DatabaseInitializer {
         }
     }
 
-    private static void executeTable(String sql, String s) {
-        try {
-            Connection connection = DatabaseConfig.getConnection();
-            Statement statement = connection.createStatement();
-
+    private static void executeTable(String sql, String successMessage) {
+        try (Connection connection = DatabaseConfig.getConnection();
+             Statement statement = connection.createStatement()) {
             statement.execute(sql);
-
+            System.out.println(successMessage);
         } catch (SQLException e) {
             throw new DatabaseAccessException("Ошибка создания таблицы: " + e.getMessage(), e);
         }

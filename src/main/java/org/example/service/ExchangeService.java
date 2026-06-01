@@ -51,26 +51,11 @@ public class ExchangeService {
         return exchangeRate;
     }
 
-    private Optional<ExchangeRate> findByCrossRate(ExchangeRateRequestDTO requestDTO) {
-        Optional<ExchangeRate> usdToBaseCurrency = exchangeRateDAO.findByCode("USD", requestDTO.getBaseCurrency());
-        Optional<ExchangeRate> usdToTargetCurrency = exchangeRateDAO.findByCode("USD", requestDTO.getTargetCurrency());
+    private Optional<ExchangeRate> findByDirectRate(ExchangeRateRequestDTO requestDTO) {
 
-        if (usdToBaseCurrency.isEmpty() || usdToTargetCurrency.isEmpty()) {
-            return Optional.empty();
-        }
-        ExchangeRate usdBase = usdToBaseCurrency.get();
-        ExchangeRate usdTarget = usdToTargetCurrency.get();
-
-        BigDecimal fromToUsd = BigDecimal.ONE.divide(usdBase.getRate(), 6, RoundingMode.HALF_UP);
-        BigDecimal rate = fromToUsd.multiply(usdTarget.getRate());
-        ExchangeRate crossRate = new ExchangeRate();
-
-        crossRate.setBaseCurrency(usdBase.getTargetCurrency());
-        crossRate.setTargetCurrency(usdTarget.getTargetCurrency());
-        crossRate.setRate(rate);
-
-        return Optional.of(crossRate);
+        return exchangeRateDAO.findByCode(requestDTO.getBaseCurrency(), requestDTO.getTargetCurrency());
     }
+
 
     private Optional<ExchangeRate> findByIndirectRate(ExchangeRateRequestDTO requestDTO) {
         String baseCurrency = requestDTO.getTargetCurrency();
@@ -92,9 +77,26 @@ public class ExchangeService {
         return Optional.of(directRate);
     }
 
-    private Optional<ExchangeRate> findByDirectRate(ExchangeRateRequestDTO requestDTO) {
 
-        return exchangeRateDAO.findByCode(requestDTO.getBaseCurrency(), requestDTO.getTargetCurrency());
+    private Optional<ExchangeRate> findByCrossRate(ExchangeRateRequestDTO requestDTO) {
+        Optional<ExchangeRate> usdToBaseCurrency = exchangeRateDAO.findByCode("USD", requestDTO.getBaseCurrency());
+        Optional<ExchangeRate> usdToTargetCurrency = exchangeRateDAO.findByCode("USD", requestDTO.getTargetCurrency());
+
+        if (usdToBaseCurrency.isEmpty() || usdToTargetCurrency.isEmpty()) {
+            return Optional.empty();
+        }
+        ExchangeRate usdBase = usdToBaseCurrency.get();
+        ExchangeRate usdTarget = usdToTargetCurrency.get();
+
+        BigDecimal fromToUsd = BigDecimal.ONE.divide(usdBase.getRate(), 6, RoundingMode.HALF_UP);
+        BigDecimal rate = fromToUsd.multiply(usdTarget.getRate());
+        ExchangeRate crossRate = new ExchangeRate();
+
+        crossRate.setBaseCurrency(usdBase.getTargetCurrency());
+        crossRate.setTargetCurrency(usdTarget.getTargetCurrency());
+        crossRate.setRate(rate);
+
+        return Optional.of(crossRate);
     }
 
 }

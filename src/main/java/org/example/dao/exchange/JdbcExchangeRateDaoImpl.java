@@ -75,14 +75,12 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
                 ORDER BY er.id;
                 """;
 
-        try {
-            Connection connection = DatabaseConfig.getConnection();
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
+        try (Connection connection = DatabaseConfig.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
 
             while (resultSet.next()) {
                 exchangeRates.add(ExchangeRateMapper.fromResultSetFull(resultSet));
-
             }
         } catch (SQLException e) {
             throw new NotFoundException("Ошибка получения курсов", e);
@@ -134,7 +132,7 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
     public ExchangeRate save(ExchangeRate exchangeRate) {
 
         ExchangeRateValidator exchangeRateValidator = new ExchangeRateValidator();
-        exchangeRateValidator.validateDifferentPairsById(exchangeRate.getBaseCurrencyId(), exchangeRate.getTargetCurrencyId());
+        ExchangeRateValidator.validateDifferentPairsById(exchangeRate.getBaseCurrencyId(), exchangeRate.getTargetCurrencyId());
 
         String sql = "INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) VALUES (?, ?, ?) RETURNING id";
 
@@ -169,7 +167,6 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
 
         try (Connection connection = DatabaseConfig.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-//из объекта в параметрах забираем значения и устанавливаем
             statement.setBigDecimal(1, exchangeRate.getRate());
             statement.setLong(2, exchangeRate.getId());
 
@@ -192,9 +189,8 @@ public class JdbcExchangeRateDaoImpl implements ExchangeRateDAO {
         }
         String sql = "DELETE FROM exchange_rates  WHERE id =? ";
 
-        try
-                (Connection connection = DatabaseConfig.getConnection();
-                 PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = DatabaseConfig.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
 
             statement.setLong(1, id);

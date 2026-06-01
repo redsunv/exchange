@@ -6,16 +6,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.dao.currency.CurrencyDAO;
-import org.example.dao.currency.CurrencyDAOImpl;
-import org.example.dao.exchange.ExchangeRateDAO;
-import org.example.dao.exchange.JdbcExchangeRateDaoImpl;
 
 import org.example.dto.exchange.ExchangeRateResponseDTO;
-import org.example.exception.DatabaseAccessException;
+
 import org.example.exception.NotFoundException;
 import org.example.exception.ValidationException;
-import org.example.model.Currency;
+
 import org.example.service.ExchangeRateService;
 
 
@@ -27,12 +23,8 @@ import java.math.BigDecimal;
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
 
-// редактирование по паре кодов
-    //doPuch перегруз базового метода сервис и проверка http метода запроса если он размен пач, то вызываем совй ду пач
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    ExchangeRateDAO exchangeRateDAO = new JdbcExchangeRateDaoImpl();
-    CurrencyDAO currencyDAO = new CurrencyDAOImpl();
     ExchangeRateService service = new ExchangeRateService();
 
     @Override
@@ -85,12 +77,12 @@ public class ExchangeRateServlet extends HttpServlet {
 
 
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String  method = req.getMethod();
+        String method = req.getMethod();
 
-        if ( method.equalsIgnoreCase("PATCH")){
-            doPatch(req,resp);
-        }else
-            super.service(req,resp);
+        if (method.equalsIgnoreCase("PATCH")) {
+            doPatch(req, resp);
+        } else
+            super.service(req, resp);
     }
 
     @Override
@@ -125,21 +117,21 @@ public class ExchangeRateServlet extends HttpServlet {
                 out.write("{\"message\": \"Missing parameter: rate\"}");
                 return;
             }
-                rateParam = rateParam.trim().replace(',', '.').replaceAll("\\s", "");
+            rateParam = rateParam.trim().replace(',', '.').replaceAll("\\s", "");
 
-                BigDecimal rate;
-                try {
-                    rate = new BigDecimal(rateParam);
-                    if (rate.compareTo(BigDecimal.ZERO) <= 0) {
-                        throw new NumberFormatException();
-                    }
-                } catch (NumberFormatException e) {
-                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    out.write("{\"message\": \"Неверный формат курса. Используйте точку (например, 0.11)\"}");
-                    return;
+            BigDecimal rate;
+            try {
+                rate = new BigDecimal(rateParam);
+                if (rate.compareTo(BigDecimal.ZERO) <= 0) {
+                    throw new NumberFormatException();
                 }
+            } catch (NumberFormatException e) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.write("{\"message\": \"Неверный формат курса. Используйте точку (например, 0.11)\"}");
+                return;
+            }
 
-            ExchangeRateResponseDTO dto = service.upDateExchangeRate(baseCode,targetCode,rate);
+            ExchangeRateResponseDTO dto = service.upDateExchangeRate(baseCode, targetCode, rate);
             String json = objectMapper.writeValueAsString(dto);
             out.print(json);
             resp.setStatus(HttpServletResponse.SC_OK);
@@ -163,7 +155,7 @@ public class ExchangeRateServlet extends HttpServlet {
 
 
     }
-    }
+}
 
 
 

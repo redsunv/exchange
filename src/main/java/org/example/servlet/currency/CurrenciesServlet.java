@@ -37,13 +37,11 @@ public class CurrenciesServlet extends HttpServlet {
 
         PrintWriter out = resp.getWriter();
         try {
-            // Получаем Entity из БД
+
             List<Currency> currencies = currencyDAO.getAll();
 
-            // Преобразуем Entity → Response DTO
             List<CurrencyResponseDTO> dto = CurrencyMapper.toResponseDTOList(currencies);
 
-            //  DTO → JSON и отправка
             String json = objectMapper.writeValueAsString(dto);
             out.print(json);
 
@@ -95,22 +93,21 @@ public class CurrenciesServlet extends HttpServlet {
             CurrencyResponseDTO responseDTO = CurrencyMapper.toResponseDTO(saved);
             String json = objectMapper.writeValueAsString(responseDTO);
             out.print(json);
-            resp.setStatus(HttpServletResponse.SC_CREATED);  //  201 Created
-
+            resp.setStatus(HttpServletResponse.SC_CREATED);
         } catch (DatabaseAccessException e) {
-            // Обработка дубликата (409) и других ошибок БД
+
             if (e.getMessage().contains("уже существует")) {
-                resp.setStatus(HttpServletResponse.SC_CONFLICT);  // 409
+                resp.setStatus(HttpServletResponse.SC_CONFLICT);
             } else {
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);  // 500
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             out.print("{\"error\": \"" + e.getMessage() + "\"}");
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);  // 404
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             out.print("{\"error\": \"" + e.getMessage() + "\"}");
         } catch (Exception e) {
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);  // 500
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             out.print("{\"error\": \"Internal server error: " + e.getMessage() + "\"}");
             e.printStackTrace();
         }
