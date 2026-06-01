@@ -8,7 +8,6 @@ import java.sql.Statement;
 
 public class DatabaseInitializer {
     public static void init() {
-
         createCurrenciesTable();
         createExchangeRatesTable();
         insertInitialData();
