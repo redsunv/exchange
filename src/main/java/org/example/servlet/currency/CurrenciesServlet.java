@@ -36,17 +36,14 @@ public class CurrenciesServlet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         PrintWriter out = resp.getWriter();
+
         try {
-
             List<Currency> currencies = currencyDAO.getAll();
-
             List<CurrencyResponseDTO> dto = CurrencyMapper.toResponseDTOList(currencies);
-
             String json = objectMapper.writeValueAsString(dto);
+
             out.print(json);
-
             resp.setStatus(HttpServletResponse.SC_OK);
-
 
         } catch (DatabaseAccessException e) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
