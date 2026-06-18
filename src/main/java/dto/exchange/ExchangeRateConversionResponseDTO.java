@@ -13,8 +13,6 @@ public class ExchangeRateConversionResponseDTO {
     private CurrencyResponseDTO  targetCurrency;
     private BigDecimal rate;
     private BigDecimal amount;
-
-
     private BigDecimal convertedAmount;
 
 }

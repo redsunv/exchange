@@ -104,7 +104,7 @@ public class ExchangeRateValidator {
             try {
                 BigDecimal amountValue = new BigDecimal(amount);
                 if (amountValue.compareTo(BigDecimal.ZERO) <= 0) {
-                    errors.add("Amount должно быть больше 0");
+                    errors.add("Amount должен быть больше 0");
                 }
             } catch (NumberFormatException e) {
                 errors.add("Неверный формат " + amount);

@@ -100,7 +100,7 @@ public class ExchangeRateServlet extends HttpServlet {
                 out.write("{\"message\": \"Коды валют пары отсутствуют в адресе\"}");
                 return;
             }
-            String pair = pathInfo.substring(1);// удаляет слещ
+            String pair = pathInfo.substring(1);// удаляет слеш
             pair = pair.toUpperCase();
 
             if (pair.length() != 6) {
